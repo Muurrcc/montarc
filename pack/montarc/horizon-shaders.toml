@@ -1,7 +1,7 @@
 schema = 1
 id = "montarc"
 name = "Montarc"
-version = "1.2.0"
+version = "1.3.0"
 api = "0.1"
 description = "Bright and colorful. Soft shadows, colored torches, real water, wind in the grass, and own look for the Nether and the End."
 authors = ["Montarc"]
@@ -19,6 +19,9 @@ fog = false
 
 [vertex]
 file = "vertex.wgsl"
+
+[weather]
+file = "weather.wgsl"
 
 [shadow]
 resolution = 2048
