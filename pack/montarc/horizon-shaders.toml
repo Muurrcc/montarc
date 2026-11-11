@@ -1,7 +1,7 @@
 schema = 1
 id = "montarc"
 name = "Montarc"
-version = "1.5.0"
+version = "1.6.0"
 api = "0.1"
 description = "Bright and colorful. Soft shadows, colored torches, real water, wind in the grass, and own look for the Nether and the End."
 authors = ["Montarc"]
@@ -153,7 +153,7 @@ items = ["shadows", "shadow_resolution", "shadow_distance", "shadow_samples", "s
 id = "water"
 name = "Water"
 description = "Reflections, waves, clarity."
-items = ["reflections", "water_waves", "water_clarity", "foam"]
+items = ["reflections", "water_waves", "water_clarity", "foam", "caustics"]
 
 [[pages]]
 id = "atmosphere"
@@ -286,6 +286,13 @@ step = 0.1
 id = "foam"
 name = "Shore foam"
 description = "White foam where water meets the shore."
+type = "bool"
+default = true
+
+[[options]]
+id = "caustics"
+name = "Underwater light"
+description = "Sunlight patterns dancing on the seabed when you swim."
 type = "bool"
 default = true
 

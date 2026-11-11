@@ -12,6 +12,7 @@ override material_vibrance: f32 = 1.12;
 override fog_amount: f32 = 1.0;
 override wet_ground: bool = true;
 override puddles: bool = true;
+override caustics: bool = true;
 override reflections: bool = true;
 override water_waves: f32 = 1.0;
 override water_clarity: f32 = 1.0;
@@ -312,6 +313,13 @@ fn puddle_rings(xz: vec2<f32>, t: f32) -> f32 {
     return ring * (1.0 - phase);
 }
 
+// Bright, shifting net of lines that sunlight makes on the bottom after it bends through waves.
+fn caustic_pattern(p: vec2<f32>, t: f32) -> f32 {
+    let a = abs(value_noise(p * 0.9 + vec2<f32>(t * 0.35, t * 0.2)) * 2.0 - 1.0);
+    let b = abs(value_noise(p * 1.4 - vec2<f32>(t * 0.25, -t * 0.3)) * 2.0 - 1.0);
+    return clamp(pow((1.0 - a) * (1.0 - b), 6.0) * 5.0, 0.0, 1.0);
+}
+
 fn material(input: MaterialInput) -> Surface {
     let n = input.normal;
     let m = input.material;
@@ -358,6 +366,13 @@ fn material(input: MaterialInput) -> Surface {
                 color = mix(color, sky, amount * (0.18 + 0.7 * fres));
                 color += vec3<f32>(rings * amount * 0.25);
             }
+        }
+        // Underwater: sunlight dancing on the seabed and walls.
+        if caustics && frame.eye_in == 1u {
+            let w = input.position + frame.camera_position;
+            let net = caustic_pattern(w.xz + w.y * 0.35, frame.time) * (0.6 + 0.4 * caustic_pattern(w.zy * 1.3 + w.x * 0.2, frame.time * 1.1));
+            let reach = smoothstep(0.55, 0.95, sky_l) * exp(-length(input.position) * 0.045);
+            color += albedo * tint * direct_color() * (net * reach * (0.4 + 0.6 * max(n.y, 0.0)) * 1.6 * day_amount());
         }
         // Sunlight glowing through foliage.
         if plant || leaves {
