@@ -1,7 +1,7 @@
 schema = 1
 id = "montarc"
 name = "Montarc"
-version = "1.3.0"
+version = "1.4.0"
 api = "0.1"
 description = "Bright and colorful. Soft shadows, colored torches, real water, wind in the grass, and own look for the Nether and the End."
 authors = ["Montarc"]
@@ -159,7 +159,7 @@ items = ["reflections", "water_waves", "water_clarity", "foam"]
 id = "atmosphere"
 name = "Sky and weather"
 description = "Fog, sky colour, wind, rain."
-items = ["fog_amount", "sky_vibrance", "waving", "wave_strength", "wet_ground", "dimension_grade", "heat_haze"]
+items = ["fog_amount", "sky_vibrance", "waving", "wave_strength", "wet_ground", "puddles", "dimension_grade", "heat_haze"]
 
 [[pages]]
 id = "look"
@@ -330,6 +330,13 @@ step = 0.1
 id = "wet_ground"
 name = "Wet surfaces"
 description = "Blocks darken in the rain."
+type = "bool"
+default = true
+
+[[options]]
+id = "puddles"
+name = "Rain puddles"
+description = "Puddles with raindrop rings on flat ground while it rains. Needs Wet surfaces."
 type = "bool"
 default = true
 

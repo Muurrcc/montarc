@@ -11,6 +11,7 @@ override colored_lights: bool = true;
 override material_vibrance: f32 = 1.12;
 override fog_amount: f32 = 1.0;
 override wet_ground: bool = true;
+override puddles: bool = true;
 override reflections: bool = true;
 override water_waves: f32 = 1.0;
 override water_clarity: f32 = 1.0;
@@ -290,6 +291,27 @@ fn water_surface(input: MaterialInput, tint: vec3<f32>) -> vec4<f32> {
     return vec4<f32>(fog_blend(rgb, input.position), clamp(alpha, 0.0, 1.0));
 }
 
+// Rain puddles: patches on flat open ground where water has gathered, each height its own set so
+// they do not run down slopes or steps. 0 dry, 1 deep in a puddle.
+fn puddle_amount(w: vec3<f32>, n: vec3<f32>, sky_l: f32) -> f32 {
+    let coords = w.xz + floor(w.y + 0.5) * 37.0;
+    let p = value_noise(coords * 0.12) * 0.56 + value_noise(coords * 0.28) * 0.30 + value_noise(coords * 0.65) * 0.14;
+    let blob = smoothstep(0.5, 0.6, p);
+    return blob * smoothstep(0.1, 0.5, frame.wetness) * smoothstep(0.85, 0.98, n.y) * smoothstep(0.7, 1.0, sky_l);
+}
+
+// Raindrop rings spreading across a puddle.
+fn puddle_rings(xz: vec2<f32>, t: f32) -> f32 {
+    let g = xz * 1.1;
+    let cell = floor(g);
+    let h = hash12(cell);
+    let centre = vec2<f32>(hash12(cell + vec2<f32>(7.0, 3.0)), hash12(cell + vec2<f32>(1.0, 9.0)));
+    let phase = fract(t * 0.8 + h);
+    let r = length(fract(g) - centre);
+    let ring = 1.0 - smoothstep(0.0, 0.05, abs(r - phase * 0.45));
+    return ring * (1.0 - phase);
+}
+
 fn material(input: MaterialInput) -> Surface {
     let n = input.normal;
     let m = input.material;
@@ -323,6 +345,20 @@ fn material(input: MaterialInput) -> Surface {
         let wrap = select(0.0, 0.5, plant || leaves);
         let light = surface_light(input, n, wrap, true);
         color = albedo * tint * light;
+        // Puddles: darker ground that mirrors the sky, with rings where drops land.
+        if puddles && wet_ground && frame.wetness > 0.1 && !input.translucent {
+            let amount = puddle_amount(input.position + frame.camera_position, n, sky_l);
+            if amount > 0.001 {
+                let view = normalize(input.position);
+                let fres = 0.05 + 0.95 * pow(1.0 - clamp(dot(-view, n), 0.0, 1.0), 4.0);
+                let r = reflect(view, n);
+                let sky = sky_gradient(vec3<f32>(r.x, abs(r.y), r.z)) * (0.35 + 0.65 * sky_l);
+                let rings = puddle_rings(input.position.xz + frame.camera_position.xz, frame.time) * frame.rain;
+                color = mix(color, color * 0.5, amount);
+                color = mix(color, sky, amount * (0.18 + 0.7 * fres));
+                color += vec3<f32>(rings * amount * 0.25);
+            }
+        }
         // Sunlight glowing through foliage.
         if plant || leaves {
             let through = max(-dot(n, frame.light_direction), 0.0) * smoothstep(0.0, 0.2, frame.light_direction.y);
