@@ -14,6 +14,16 @@ Bright, colorful shader pack for Horizon. Horizon had no shaders on the registry
 - **Nether and End look different.** Nether is hot and hazy, with heat shimmer. End is cold and purple.
 - **29 options.** Everything can be tuned or turned off in game.
 
+## Screenshots
+
+![Montarc 1](docs/screenshots/1.png)
+![Montarc 2](docs/screenshots/2.png)
+![Montarc 3](docs/screenshots/3.png)
+![Montarc 4](docs/screenshots/4.png)
+![Montarc 5](docs/screenshots/5.png)
+![Montarc 6](docs/screenshots/6.png)
+![Montarc 7](docs/screenshots/7.png)
+
 ## Install
 
 - Put `montarc-x.y.z.hshader` in the `shaderpacks` folder next to `options.txt`. Don't unzip it.
@@ -47,6 +57,7 @@ MIT. Fan project, not affiliated with Horizon or Mojang.
 - `pack/montarc/`: the shader pack (manifest and WGSL files).
 - `horizon-registry.toml`: the page text for the Horizon registry.
 - `docs/cover.png`: cover image.
+- `docs/screenshots/`: in-game screenshots.
 
 ## Build
 

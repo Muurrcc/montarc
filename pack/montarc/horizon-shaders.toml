@@ -1,7 +1,7 @@
 schema = 1
 id = "montarc"
 name = "Montarc"
-version = "1.1.1"
+version = "1.1.2"
 api = "0.1"
 description = "Bright and colorful. Soft shadows, colored torches, real water, wind in the grass, and own look for the Nether and the End."
 authors = ["Montarc"]
@@ -101,7 +101,15 @@ blocks = ["end_rod"]
 
 [[lights]]
 color = [0.7, 0.4, 1.0]
-blocks = ["amethyst_cluster", "*_amethyst_bud", "crying_obsidian", "nether_portal"]
+blocks = ["amethyst_cluster", "*_amethyst_bud", "crying_obsidian"]
+
+[[lights]]
+color = [0.65, 0.3, 1.0]
+blocks = ["nether_portal"]
+
+[[lights]]
+color = [0.25, 0.95, 0.8]
+blocks = ["end_portal", "end_gateway"]
 
 [[lights]]
 color = [0.45, 1.0, 0.5]

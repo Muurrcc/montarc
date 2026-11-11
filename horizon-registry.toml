@@ -2,6 +2,7 @@ name = "Montarc"
 summary = "Bright, colorful shader pack: soft shadows, colored light, living water, wind, and own look for the Nether and the End."
 authors = ["Muurrcc"]
 license = "MIT"
+screenshots = ["screenshots/montarc/1.png", "screenshots/montarc/2.png", "screenshots/montarc/3.png", "screenshots/montarc/4.png", "screenshots/montarc/5.png", "screenshots/montarc/6.png", "screenshots/montarc/7.png"]
 description = """
 Bright, colorful shader pack for Horizon. Horizon had no shaders on the registry, so I made one. Style is close to Complementary Reimagined, but the code is mine, written from scratch in WGSL.
 
