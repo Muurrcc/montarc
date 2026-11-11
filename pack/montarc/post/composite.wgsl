@@ -9,6 +9,7 @@ override sharpen: f32 = 0.3;
 override vignette: bool = true;
 override dimension_grade: bool = true;
 override heat_haze: f32 = 1.0;
+override god_rays: f32 = 0.0;
 
 fn soft_shoulder(c: vec3<f32>) -> vec3<f32> {
     let m = max(max(c.r, c.g), max(c.b, 0.0001));
@@ -22,6 +23,38 @@ fn soft_shoulder(c: vec3<f32>) -> vec3<f32> {
 
 fn scene(uv: vec2<f32>) -> vec3<f32> {
     return textureSampleLevel(scene_color, linear_sampler, uv, 0.0).rgb;
+}
+
+// Sunbeams: light from the sky streaming past whatever stands between you and the sun. Marches
+// from this pixel toward the sun on screen and counts how much of the way is open sky.
+fn sun_rays(uv: vec2<f32>) -> vec3<f32> {
+    let sun = frame.sun_direction;
+    if frame.dimension != 0 || sun.y < 0.02 || frame.eye_in != 0u {
+        return vec3<f32>(0.0);
+    }
+    let clip = frame.projection * (frame.view * vec4<f32>(sun, 0.0) + vec4<f32>(0.0, 0.0, 0.0, 1.0));
+    if clip.w <= 0.0 {
+        return vec3<f32>(0.0);
+    }
+    let ndc = clip.xy / clip.w;
+    let suv = vec2<f32>(ndc.x * 0.5 + 0.5, 0.5 - ndc.y * 0.5);
+    let aspect = frame.resolution.x / frame.resolution.y;
+    let near = length((uv - suv) * vec2<f32>(aspect, 1.0));
+    let falloff = 1.0 - smoothstep(0.0, 1.2, near);
+    if falloff <= 0.0 {
+        return vec3<f32>(0.0);
+    }
+    let jitter = ign(uv * frame.resolution);
+    var open = 0.0;
+    for (var i = 0; i < 12; i++) {
+        let f = (f32(i) + jitter) / 12.0;
+        let p = mix(uv, suv, f * 0.8);
+        if all(p > vec2<f32>(0.0)) && all(p < vec2<f32>(1.0)) {
+            open += select(0.0, 1.0, depth_at(p) == 0.0);
+        }
+    }
+    let k = pow(open / 12.0, 1.5) * falloff * smoothstep(0.02, 0.3, sun.y);
+    return direct_color() * (k * (1.0 - frame.rain) * 0.35);
 }
 
 fn post(input: PostInput) -> vec4<f32> {
@@ -50,6 +83,10 @@ fn post(input: PostInput) -> vec4<f32> {
             boost = select(1.35, 1.6, frame.dimension == -1);
         }
         c += textureSampleLevel(bloom_c, linear_sampler, uv, 0.0).rgb * (bloom * 1.6 * boost);
+    }
+
+    if god_rays > 0.0 {
+        c += sun_rays(uv) * god_rays;
     }
 
     // Underwater the picture goes blue-green; in lava, red.

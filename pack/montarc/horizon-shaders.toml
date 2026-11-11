@@ -1,7 +1,7 @@
 schema = 1
 id = "montarc"
 name = "Montarc"
-version = "1.4.0"
+version = "1.5.0"
 api = "0.1"
 description = "Bright and colorful. Soft shadows, colored torches, real water, wind in the grass, and own look for the Nether and the End."
 authors = ["Montarc"]
@@ -165,7 +165,7 @@ items = ["fog_amount", "sky_vibrance", "waving", "wave_strength", "wet_ground", 
 id = "look"
 name = "Picture"
 description = "Colour, tone, bloom, anti-aliasing."
-items = ["material_vibrance", "saturation", "contrast", "exposure", "tonemap", "bloom", "bloom_threshold", "sharpen", "vignette", "fxaa"]
+items = ["material_vibrance", "saturation", "contrast", "exposure", "tonemap", "bloom", "bloom_threshold", "god_rays", "sharpen", "vignette", "fxaa"]
 
 [[options]]
 id = "shadows"
@@ -407,6 +407,16 @@ default = 0.9
 min = 0.5
 max = 1.5
 step = 0.05
+
+[[options]]
+id = "god_rays"
+name = "Sunbeams"
+description = "Light rays streaming past trees and hills toward the sun. Off by default; costs a little FPS."
+type = "float"
+default = 0.0
+min = 0.0
+max = 2.0
+step = 0.1
 
 [[options]]
 id = "sharpen"
