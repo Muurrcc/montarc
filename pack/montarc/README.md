@@ -23,6 +23,8 @@ You need the nightly build of Horizon (2026-11-04 or newer). The older native bu
 ## Slow? Try this
 
 - Shadow quality: Low
+- Shadow map size: 1024 or 512
+- Shadow distance: 64
 - Water reflections: off
 - Bloom: off
 - Shadows: off. Biggest gain.
