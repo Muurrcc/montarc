@@ -3,7 +3,7 @@
 override bloom_threshold: f32 = 0.9;
 
 fn bright(uv: vec2<f32>) -> vec3<f32> {
-    let c = textureSampleLevel(scene_color, linear_sampler, uv, 0.0).rgb;
+    let c = to_display(textureSampleLevel(scene_color, linear_sampler, uv, 0.0).rgb);
     let sky = select(1.0, 0.35, depth_at(uv) == 0.0);
     let k = smoothstep(bloom_threshold, bloom_threshold + 0.35, luminance(c));
     return c * (k * sky);

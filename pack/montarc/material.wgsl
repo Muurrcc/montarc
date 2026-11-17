@@ -69,7 +69,7 @@ fn sample_shadow(position: vec3<f32>, n: vec3<f32>, l: vec3<f32>, pixel: vec2<f3
             let uv = clamp(sp.xy, vec2<f32>(0.0), vec2<f32>(0.999));
             let c = textureLoad(shadow_color, vec2<i32>(uv * dims), 0);
             let k = select(c.a, 0.85, c.a > 0.99);
-            r.tint = mix(vec3<f32>(1.0), c.rgb, k) * select(1.0, 0.92, c.a > 0.99);
+            r.tint = mix(vec3<f32>(1.0), to_display(c.rgb), k) * select(1.0, 0.92, c.a > 0.99);
         }
     }
     return r;
@@ -108,10 +108,10 @@ fn surface_light(input: MaterialInput, n: vec3<f32>, wrap: f32, use_shadow: bool
     // Block light: torch-warm unless the source has a colour of its own.
     var bcol = vec3<f32>(1.0, 0.64, 0.34);
     if colored_lights {
-        let bl = block_light_color(input.position);
+        let bl = vec4<f32>(to_display(block_light_color(input.position).rgb), block_light_color(input.position).a);
         let m = max(max(bl.r, bl.g), max(bl.b, 0.001));
         bcol = mix(bcol, bl.rgb / m, clamp(bl.a, 0.0, 1.0) * step(0.01, m));
-        total += input.colored_light * 1.2;
+        total += to_display(input.colored_light) * 1.2;
     }
     let wash = 1.0 - 0.8 * day * sky_l;
     total += bcol * (pow(block_l, 2.4) * 1.5 * wash * block_light_strength);
@@ -125,7 +125,7 @@ fn surface_light(input: MaterialInput, n: vec3<f32>, wrap: f32, use_shadow: bool
 // The Nether's biome colour: vanilla's fog colour (crimson, warped teal, soul-sand blue, basalt
 // grey...) stretched to full brightness, so each biome keeps its own mood.
 fn nether_tone() -> vec3<f32> {
-    let f = frame.fog_color;
+    let f = fog_colour();
     return f / max(max(f.r, max(f.g, f.b)), 0.06);
 }
 
@@ -134,7 +134,7 @@ fn nether_tone() -> vec3<f32> {
 fn dimension_light(input: MaterialInput, n: vec3<f32>) -> vec3<f32> {
     let block_l = clamp(input.light.x, 0.0, 1.0);
     let up = n.y * 0.5 + 0.5;
-    let vanilla = clamp(luminance(input.lightmap), 0.0, 1.0);
+    let vanilla = clamp(luminance(to_display(input.lightmap)), 0.0, 1.0);
     var total = vec3<f32>(0.0);
 
     if frame.dimension == -1 {
@@ -156,7 +156,7 @@ fn dimension_light(input: MaterialInput, n: vec3<f32>) -> vec3<f32> {
     }
 
     if colored_lights {
-        total += input.colored_light * 1.2;
+        total += to_display(input.colored_light) * 1.2;
     }
     total += vec3<f32>(frame.night_vision * 0.55);
     return total * (1.0 - frame.darkness * 0.6);
@@ -168,7 +168,7 @@ fn fog_blend(color: vec3<f32>, position: vec3<f32>) -> vec3<f32> {
     let dir = position / max(dist, 0.0001);
     let eye_sky = clamp(frame.eye_light_smooth.y, 0.0, 1.0);
     var f = 0.0;
-    var fc = frame.fog_color;
+    var fc = fog_colour();
 
     if frame.eye_in == 1u {
         f = 1.0 - exp(-dist * 0.1);
@@ -188,7 +188,7 @@ fn fog_blend(color: vec3<f32>, position: vec3<f32>) -> vec3<f32> {
         // The End: a violet mist that swallows the void.
         let reach = max(frame.fog_end, 48.0) / max(fog_amount, 0.05);
         f = 1.0 - exp(-pow(dist / reach, 2.4));
-        fc = mix(frame.fog_color, vec3<f32>(0.08, 0.035, 0.16), 0.65);
+        fc = mix(fog_colour(), vec3<f32>(0.08, 0.035, 0.16), 0.65);
     } else {
         let reach = frame.render_distance * mix(0.7, 0.42, frame.wetness) / max(fog_amount, 0.05);
         f = 1.0 - exp(-pow(dist / max(reach, 1.0), 3.4));
@@ -261,9 +261,9 @@ fn water_surface(input: MaterialInput, tint: vec3<f32>) -> vec4<f32> {
         var refl = sky_gradient(vec3<f32>(r.x, abs(r.y), r.z));
         if reflections && frame.has_reflection == 1u {
             let suv = clamp(input.screen + wn.xz * 0.12, vec2<f32>(0.002), vec2<f32>(0.998));
-            let mir = textureSampleLevel(reflection, reflection_sampler, suv, 0.0).rgb;
+            let mir = to_display(textureSampleLevel(reflection, reflection_sampler, suv, 0.0).rgb);
             // The mirror holds vanilla's sky; swap it for ours.
-            let d_sky = min(distance(mir, frame.sky_color), distance(mir, frame.fog_color));
+            let d_sky = min(distance(mir, sky_colour()), distance(mir, fog_colour()));
             refl = mix(mir, refl, 1.0 - smoothstep(0.03, 0.12, d_sky));
         }
         rgb = mix(body, refl, fres * 0.92);
@@ -320,7 +320,7 @@ fn caustic_pattern(p: vec2<f32>, t: f32) -> f32 {
     return clamp(pow((1.0 - a) * (1.0 - b), 6.0) * 5.0, 0.0, 1.0);
 }
 
-fn material(input: MaterialInput) -> Surface {
+fn material_display(input: MaterialInput) -> Surface {
     let n = input.normal;
     let m = input.material;
     let plant = m >= 1u && m <= 3u;
@@ -383,4 +383,14 @@ fn material(input: MaterialInput) -> Surface {
     color += albedo * input.emission * 1.8;
 
     return Surface(vec4<f32>(fog_blend(color, input.position), input.albedo.a));
+}
+
+// The stage Horizon calls: decode the linear inputs, shade as in display space, encode the result.
+fn material(input: MaterialInput) -> Surface {
+    var g = input;
+    g.albedo = vec4<f32>(to_display(input.albedo.rgb), input.albedo.a);
+    g.tint = vec4<f32>(to_display(input.tint.rgb), input.tint.a);
+    g.lightmap = to_display(input.lightmap);
+    let s = material_display(g);
+    return Surface(vec4<f32>(to_linear(s.color.rgb), s.color.a));
 }

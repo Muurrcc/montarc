@@ -30,7 +30,7 @@ Bright, colorful shader pack for Horizon. Horizon had no shaders on the registry
 - Options > Horizon Settings > Shader Packs > Montarc.
 - Click it again to turn it off.
 
-You need the nightly build of Horizon (2026-11-04 or newer). The older native build refuses the pack because its shader API is smaller.
+You need a Horizon build that serves shader API 0.2 (the nightly build, from 2026-11-15). Builds that still serve 0.1 refuse the pack.
 
 ## Slow? Try this
 
@@ -45,7 +45,7 @@ Montarc aims for about 3 ms of GPU time.
 
 ## Known problems
 
-- Horizon shader API is 0.1, experimental. It can change.
+- Horizon shader API is 0.2, experimental. It can change.
 - Entities, block entities and particles are not shaded yet. There is no stage for them.
 - Nether and End sky is vanilla. The sky stage only draws in the Overworld.
 - Shadow bias may need tuning on some GPUs. If you see stripes on surfaces, change `Shadow bias`.

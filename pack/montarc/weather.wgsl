@@ -15,8 +15,8 @@ fn weather(input: WeatherInput) -> vec4<f32> {
 
     if input.snow {
         let col = vec3<f32>(0.95, 0.97, 1.0) * lit * 1.4;
-        return vec4<f32>(col, input.color.a * 0.85);
+        return vec4<f32>(to_linear(col), input.color.a * 0.85);
     }
     let col = vec3<f32>(0.72, 0.82, 0.95) * lit * 1.5;
-    return vec4<f32>(col, input.color.a * mix(0.42, 0.7, day));
+    return vec4<f32>(to_linear(col), input.color.a * mix(0.42, 0.7, day));
 }

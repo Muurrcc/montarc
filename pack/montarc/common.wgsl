@@ -2,6 +2,25 @@
 
 const PI: f32 = 3.14159265;
 
+// Shader API 0.2 hands every colour over as linear light. Montarc's look was tuned on display
+// values (the 0.1 gamma line), so each stage decodes what it reads with `to_display`, does its
+// maths exactly as before, and encodes what it returns with `to_linear`.
+fn to_display(c: vec3<f32>) -> vec3<f32> {
+    return pow(max(c, vec3<f32>(0.0)), vec3<f32>(1.0 / 2.2));
+}
+
+fn to_linear(c: vec3<f32>) -> vec3<f32> {
+    return pow(max(c, vec3<f32>(0.0)), vec3<f32>(2.2));
+}
+
+fn fog_colour() -> vec3<f32> {
+    return to_display(frame.fog_color);
+}
+
+fn sky_colour() -> vec3<f32> {
+    return to_display(frame.sky_color);
+}
+
 fn luminance(c: vec3<f32>) -> f32 {
     return dot(c, vec3<f32>(0.2126, 0.7152, 0.0722));
 }

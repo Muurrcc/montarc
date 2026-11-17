@@ -9,5 +9,5 @@ fn sky(input: SkyInput) -> vec4<f32> {
     }
     var col = sky_gradient(input.direction);
     col = saturate_color(col, sky_vibrance);
-    return vec4<f32>(col, 1.0);
+    return vec4<f32>(to_linear(col), 1.0);
 }

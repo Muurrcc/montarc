@@ -1,8 +1,8 @@
 schema = 1
 id = "montarc"
 name = "Montarc"
-version = "1.6.0"
-api = "0.1"
+version = "1.7.0"
+api = "0.2"
 description = "Bright and colorful. Soft shadows, colored torches, real water, wind in the grass, and own look for the Nether and the End."
 authors = ["Montarc"]
 license = "MIT"
@@ -15,7 +15,9 @@ name = "Sky"
 [material]
 file = "material.wgsl"
 name = "Terrain"
-fog = false
+
+[frame]
+fog = "pack"
 
 [vertex]
 file = "vertex.wgsl"

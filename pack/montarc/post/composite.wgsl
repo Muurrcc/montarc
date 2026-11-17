@@ -22,7 +22,7 @@ fn soft_shoulder(c: vec3<f32>) -> vec3<f32> {
 }
 
 fn scene(uv: vec2<f32>) -> vec3<f32> {
-    return textureSampleLevel(scene_color, linear_sampler, uv, 0.0).rgb;
+    return to_display(textureSampleLevel(scene_color, linear_sampler, uv, 0.0).rgb);
 }
 
 // Sunbeams: light from the sky streaming past whatever stands between you and the sun. Marches
@@ -68,7 +68,7 @@ fn post(input: PostInput) -> vec4<f32> {
         uv = clamp(uv, vec2<f32>(0.001), vec2<f32>(0.999));
     }
     let s = textureSampleLevel(scene_color, linear_sampler, uv, 0.0);
-    var c = s.rgb;
+    var c = to_display(s.rgb);
 
     if sharpen > 0.0 {
         let px = 1.0 / frame.resolution;
@@ -125,5 +125,5 @@ fn post(input: PostInput) -> vec4<f32> {
         let d = length((uv - 0.5) * vec2<f32>(aspect, 1.0)) / length(vec2<f32>(aspect, 1.0) * 0.5);
         c *= 1.0 - smoothstep(0.55, 1.1, d) * edge;
     }
-    return vec4<f32>(clamp(c, vec3<f32>(0.0), vec3<f32>(1.0)), s.a);
+    return vec4<f32>(to_linear(clamp(c, vec3<f32>(0.0), vec3<f32>(1.0))), 1.0);
 }

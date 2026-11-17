@@ -27,7 +27,7 @@ Bright, colorful shader pack for Horizon. Horizon had no shaders on the registry
 
 ## Known problems
 
-- Horizon shader API is 0.1, experimental. It can change.
+- Horizon shader API is 0.2, experimental. It can change.
 - Entities, block entities and particles are not shaded yet. There is no stage for them.
 - Nether and End sky is vanilla. The sky stage only draws in the Overworld.
 - Shadow bias may need tuning on some GPUs. If you see stripes on surfaces, change `Shadow bias`.
