@@ -2,7 +2,7 @@ name = "Montarc"
 summary = "Bright, colorful shader pack: soft shadows, colored light, living water, wind, and own look for the Nether and the End."
 authors = ["Muurrcc"]
 license = "MIT"
-screenshots = ["screenshots/montarc/1.png", "screenshots/montarc/2.png", "screenshots/montarc/3.png", "screenshots/montarc/4.png", "screenshots/montarc/5.png", "screenshots/montarc/6.png", "screenshots/montarc/7.png"]
+screenshots = ["screenshots/montarc/1.jpg", "screenshots/montarc/2.jpg", "screenshots/montarc/3.jpg", "screenshots/montarc/4.jpg", "screenshots/montarc/5.jpg", "screenshots/montarc/6.jpg", "screenshots/montarc/7.jpg", "screenshots/montarc/8.jpg", "screenshots/montarc/9.jpg"]
 description = """
 Bright, colorful shader pack for Horizon. Horizon had no shaders on the registry, so I made one. Style is close to Complementary Reimagined, but the code is mine, written from scratch in WGSL.
 
@@ -16,6 +16,12 @@ Bright, colorful shader pack for Horizon. Horizon had no shaders on the registry
 - **Nether and End look different.** Nether is hot and hazy, with heat shimmer. End is cold and purple.
 - **29 options.** Everything can be tuned or turned off in game.
 
+## Which version do I take?
+
+- **1.7.0** is for Horizon builds that serve shader API 0.2 (newer than Nightly 2026-11-13).
+- **1.6.1** is for builds that still serve shader API 0.1.
+The launcher offers the one your game can run.
+
 ## Slow? Try this
 
 - Shadow quality: Low
@@ -27,7 +33,7 @@ Bright, colorful shader pack for Horizon. Horizon had no shaders on the registry
 
 ## Known problems
 
-- Horizon shader API is 0.2, experimental. It can change.
+- Horizon's shader API is experimental and can change.
 - Entities, block entities and particles are not shaded yet. There is no stage for them.
 - Nether and End sky is vanilla. The sky stage only draws in the Overworld.
 - Shadow bias may need tuning on some GPUs. If you see stripes on surfaces, change `Shadow bias`.
