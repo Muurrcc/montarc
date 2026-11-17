@@ -171,8 +171,10 @@ fn fog_blend(color: vec3<f32>, position: vec3<f32>) -> vec3<f32> {
     var fc = frame.fog_color;
 
     if frame.eye_in == 1u {
-        f = 1.0 - exp(-dist * 0.1);
-        fc = vec3<f32>(0.03, 0.2, 0.33) * (0.18 + 0.82 * eye_sky);
+        f = 1.0 - exp(-dist * 0.065 / max(water_clarity, 0.1));
+        // Clear blue-teal water: lit by the day above, never pitch black at night.
+        let lit = mix(0.3, 1.0, eye_sky * day_amount()) ;
+        fc = vec3<f32>(0.06, 0.36, 0.54) * lit;
     } else if frame.eye_in == 2u {
         f = 1.0 - exp(-dist * 0.7);
         fc = vec3<f32>(0.6, 0.15, 0.02);

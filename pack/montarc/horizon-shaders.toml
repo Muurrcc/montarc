@@ -1,7 +1,7 @@
 schema = 1
 id = "montarc"
 name = "Montarc"
-version = "1.6.0"
+version = "1.6.1"
 api = "0.1"
 description = "Bright and colorful. Soft shadows, colored torches, real water, wind in the grass, and own look for the Nether and the End."
 authors = ["Montarc"]
