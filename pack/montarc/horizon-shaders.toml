@@ -15,9 +15,7 @@ name = "Sky"
 [material]
 file = "material.wgsl"
 name = "Terrain"
-
-[frame]
-fog = "pack"
+fog = false
 
 [vertex]
 file = "vertex.wgsl"
