@@ -18,8 +18,8 @@ Bright, colorful shader pack for Horizon. Horizon had no shaders on the registry
 
 ## Which version do I take?
 
-- **1.7.0** is for Horizon builds that serve shader API 0.2 (newer than Nightly 2026-11-13).
-- **1.6.1** is for builds that still serve shader API 0.1.
+- **1.7.1** is for Horizon Nightly 2026-11-18 or newer (the final shader API 0.2).
+- **1.6.1** is for older builds that still serve shader API 0.1. The Nightly no longer loads it.
 The launcher offers the one your game can run.
 
 ## Slow? Try this

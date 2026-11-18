@@ -18,7 +18,7 @@ Bright, colorful shader pack for Horizon. Horizon had no shaders on the registry
 - Options > Horizon Settings > Shader Packs > Montarc.
 - Click it again to turn it off.
 
-You need a Horizon build that serves shader API 0.2 (the nightly build, from 2026-11-15). Builds that still serve 0.1 refuse the pack.
+You need a Horizon build with the final shader API 0.2 (Nightly 2026-11-18 or newer). Older builds that still serve 0.1 refuse this version.
 
 ## Slow? Try this
 

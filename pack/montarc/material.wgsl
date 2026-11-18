@@ -183,12 +183,12 @@ fn fog_blend(color: vec3<f32>, position: vec3<f32>) -> vec3<f32> {
         fc = vec3<f32>(0.78, 0.88, 0.95) * (0.3 + 0.7 * eye_sky);
     } else if frame.dimension == -1 {
         // Thick, glowing heat haze in the biome's colour.
-        let reach = max(frame.fog_end, 24.0) * 0.85 / max(fog_amount, 0.05);
+        let reach = max(min(frame.fog_environment.y, frame.fog_render.y), 24.0) * 0.85 / max(fog_amount, 0.05);
         f = 1.0 - exp(-pow(dist / reach, 2.2));
         fc = nether_tone() * mix(vec3<f32>(0.5, 0.2, 0.12), vec3<f32>(0.42), 0.4) * vec3<f32>(1.0, 0.8, 0.7);
     } else if frame.dimension != 0 {
         // The End: a violet mist that swallows the void.
-        let reach = max(frame.fog_end, 48.0) / max(fog_amount, 0.05);
+        let reach = max(min(frame.fog_environment.y, frame.fog_render.y), 48.0) / max(fog_amount, 0.05);
         f = 1.0 - exp(-pow(dist / reach, 2.4));
         fc = mix(fog_colour(), vec3<f32>(0.08, 0.035, 0.16), 0.65);
     } else {
@@ -329,16 +329,16 @@ fn material_display(input: MaterialInput) -> Surface {
     let leaves = m == 4u;
 
     if input.fluid == 1u {
-        return Surface(water_surface(input, input.tint.rgb));
+        return Surface(water_surface(input, input.shaded_tint.rgb));
     }
     if input.fluid == 2u {
         // Lava lights itself.
-        let lava = input.albedo.rgb * input.tint.rgb * 1.9;
+        let lava = input.albedo.rgb * input.shaded_tint.rgb * 1.9;
         return Surface(vec4<f32>(fog_blend(lava, input.position), 1.0));
     }
 
     var albedo = saturate_color(input.albedo.rgb, material_vibrance);
-    var tint = input.tint.rgb;
+    var tint = input.shaded_tint.rgb;
     if !plant {
         tint = tint / face_shade(n);
     }
@@ -391,7 +391,7 @@ fn material_display(input: MaterialInput) -> Surface {
 fn material(input: MaterialInput) -> Surface {
     var g = input;
     g.albedo = vec4<f32>(to_display(input.albedo.rgb), input.albedo.a);
-    g.tint = vec4<f32>(to_display(input.tint.rgb), input.tint.a);
+    g.shaded_tint = vec4<f32>(to_display(input.shaded_tint.rgb), input.shaded_tint.a);
     g.lightmap = to_display(input.lightmap);
     let s = material_display(g);
     return Surface(vec4<f32>(to_linear(s.color.rgb), s.color.a));
